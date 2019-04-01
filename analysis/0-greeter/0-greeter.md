@@ -64,6 +64,7 @@
         ,add = "mean"
         ,rug = TRUE
         ,palette = c("#00AFBB", "#E7B800")
+        ,alpha = .2
       )
 
     Warning: Using `bins = 30` by default. Pick better value with the argument `bins`.
@@ -104,7 +105,6 @@
 <img src="figure_rmd/basic-graph-4.png" width="550px" />
 
     # or spreads
-
     g5 <-  ds %>% 
       ggpubr::ggdensity(
         x = "val"
@@ -118,3 +118,68 @@
     g5
 
 <img src="figure_rmd/basic-graph-5.png" width="550px" />
+
+    # conditions <- c(2, 12, 22, 32)
+    conditions <- c(5, 15, 25, 35)
+    d1 <- ds %>% 
+      dplyr::filter(graphNum %in% conditions) 
+
+    # density
+    g6 <-  d1 %>% 
+      dplyr::filter(graphNum %in% conditions) %>% 
+      ggpubr::ggdensity(
+        x = "val"
+        ,color = "group"
+        ,fill  = "group"
+        ,add = "mean"
+        ,rug = TRUE
+        ,palette = c("#00AFBB", "#E7B800")
+      )+
+      facet_wrap(~graphNum)
+    g6
+
+<img src="figure_rmd/sample-of-graphs-1-1.png" width="550px" />
+
+    # boxplot
+    g7 <- d1 %>% 
+      ggpubr::ggboxplot(
+        x         = "group"
+        , y       = "val"
+        , color   = "group"
+        , palette = c("#00AFBB", "#E7B800")
+        , add     = "jitter"
+        , shape   = "group"
+      )+
+      facet_wrap(~graphNum)
+    g7 %>% print()
+
+<img src="figure_rmd/sample-of-graphs-1-2.png" width="550px" />
+
+    # histogram
+    g8 <- d1 %>% 
+    ggpubr::gghistogram(
+      x = "val"
+      ,color = "group"
+      ,fill  = "group"
+      ,add = "mean"
+      ,rug = TRUE
+      ,palette = c("#00AFBB", "#E7B800")
+      ,alpha = .2
+    )+
+      facet_wrap(~graphNum)
+
+    Warning: Using `bins = 30` by default. Pick better value with the argument `bins`.
+
+    g8
+
+<img src="figure_rmd/sample-of-graphs-1-3.png" width="550px" />
+
+    ds_pars %>% filter(graphNum %in% c(1,11,21,31))
+
+    # A tibble: 4 x 4
+      graphNum effectSize     N actualES
+         <dbl>      <dbl> <dbl>    <dbl>
+    1        1        0      80    0.006
+    2       11        0.3    80    0.302
+    3       21        0.5    80    0.457
+    4       31        0.8    80    0.756
