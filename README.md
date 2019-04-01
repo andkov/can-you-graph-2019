@@ -11,8 +11,10 @@ call for proposal announcement - [pdf][call2019]
 - [`./manupulation/0-data-simulator-SYTYCG-season-1.R`][m1] simulates the data used in the graphing challenge https://osf.io/udfpq/. Prints data into `./data-unshared/derived/`. This script was adapted from `dataSimulations_SYTYCG_Season1.R` script in the original [package][osfRepo] 
 
 
-- [`./manipulation/0-greeter.R`][0-greeter] - imports simulatated data to be used in the graphing challenge and conducts initial exploration.
+- [`./manipulation/0-greeter.R`][0-greeter] - imports simulatated data to be used in the graphing challenge and conducts initial exploration. View the [dynamic report][0-greeter-html] on this script.
 
 [osfRepo]:https://osf.io/udfpq/
 [0-greeter]:manipulation/0-greeter.R
 [m1]:manupulation/0-data-simulator-SYTYCG-season-1.R
+
+[0-greeter-html]: https://raw.githack.com/andkov/can-you-graph-2019/master/analysis/0-greeter/0-greeter.html
