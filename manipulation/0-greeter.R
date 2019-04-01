@@ -1,13 +1,7 @@
-# this script imports the raw data described in this shared document 
-# https://drive.google.com/file/d/10idMxy8eX8nTHr6wr2Q40x4XOP3Y5ck7/view
-# and prepares a state of data used as a standard point of departure for any subsequent reproducible analytics
-
 # Lines before the first chunk are invisible to Rmd/Rnw callers
 # Run to stitch a tech report of this script (used only in RStudio)
-# knitr::stitch_rmd(
-#   script = "./manipulation/0-greeter.R",
-#   output = "./manipulation/stitched-output/0-greeter.md"
-# )
+knitr::stitch_rmd(script = "./manipulation/0-greeter.R", output = "./stitched-output/manipulation/0-greeter.md", figure)
+# knitr::stitch_rmd(script = "./manipulation/0-greeter.R", output = "./manipulation/stitched-output/0-greeter.md", )
 # this command is typically executed by the ./manipulation/governor.R
 
 rm(list=ls(all=TRUE)) #Clear the memory of variables from previous run. 
@@ -21,7 +15,7 @@ cat("\f") # clear console when working in RStudio
 # Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
 library(magrittr) #Pipes
 library(dplyr) # disable when temp lines are removed
-
+library(ggplot2)
 # ---- declare-globals ---------------------------------------------------------
 path_file_input_data       <- "./data-unshared/derived/saveData_SYTYCG_Season1.csv"
 path_file_input_parameters <- "./data-unshared/derived/saveParams_SYTYCG_Season1.csv"
@@ -29,9 +23,96 @@ path_file_input_parameters <- "./data-unshared/derived/saveParams_SYTYCG_Season1
 ds      <- readr::read_csv(path_file_input_data); ds %>% glimpse()
 ds_pars <- readr::read_csv(path_file_input_parameters); ds_pars %>% glimpse()
 
+ds %>% head()
 # ---- tweak-data ---------------------------------------------------------------
 
+# ---- basic-graph -------------------------------------------------------
+
+t1 <- ds %>% 
+  dplyr::filter(graphNum == 12) 
+
+# start with a basic boxplot
+# see https://rpkgs.datanovia.com/ggpubr/reference/stat_compare_means.html
+
+# boxplot
+g1 <- t1 %>% 
+  ggpubr::ggboxplot(
+    x         = "group"
+    , y       = "val"
+    , color   = "group"
+    , palette = c("#00AFBB", "#E7B800")
+    , add     = "jitter"
+    , shape   = "group"
+  )
+g1 %>% print()
+
+# histogram
+g2 <- t1 %>% 
+  ggpubr::gghistogram(
+    x = "val"
+    ,color = "group"
+    ,fill  = "group"
+    ,add = "mean"
+    ,rug = TRUE
+    ,palette = c("#00AFBB", "#E7B800")
+  )
+g2
+
+# density
+g3 <- t1 %>% 
+  ggpubr::ggdensity(
+    x = "val"
+    ,color = "group"
+    ,fill  = "group"
+    ,add = "mean"
+    ,rug = TRUE
+    ,palette = c("#00AFBB", "#E7B800")
+  )
+g3
+
+# but it's better to think in terms of facets
+t2 <- ds %>% 
+  dplyr::filter(graphNum %in% c(12, 24, 40 ))
+g4 <-  t2 %>% 
+  ggpubr::ggdensity(
+    x = "val"
+    ,color = "group"
+    ,fill  = "group"
+    ,add = "mean"
+    ,rug = TRUE
+    ,palette = c("#00AFBB", "#E7B800")
+  )+
+  facet_grid(.~graphNum)
+g4
+
+# or spreads
+
+g5 <-  ds %>% 
+  ggpubr::ggdensity(
+    x = "val"
+    ,color = "group"
+    ,fill  = "group"
+    ,add = "mean"
+    ,rug = TRUE
+    ,palette = c("#00AFBB", "#E7B800")
+  )+
+  facet_wrap(~graphNum)
+g5
+
+  
 # ---- define-utility-functions ---------------
 
 # ---- save-to-disk ----------------------------
+
+# ---- publish ---------------------------------
+rmarkdown::render(
+  input = "./analysis/0-greeter/0-greeter.Rmd"
+  ,output_format = c(
+    "html_document" 
+    # "pdf_document"
+    ,"md_document"
+    # "word_document" 
+  )
+  ,clean=TRUE
+  )
 
