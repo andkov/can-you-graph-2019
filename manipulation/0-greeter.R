@@ -16,6 +16,7 @@ cat("\f") # clear console when working in RStudio
 library(magrittr) #Pipes
 library(dplyr) # disable when temp lines are removed
 library(ggplot2)
+library(ggpubr)
 # ---- declare-globals ---------------------------------------------------------
 path_file_input_data       <- "./data-unshared/derived/saveData_SYTYCG_Season1.csv"
 path_file_input_parameters <- "./data-unshared/derived/saveParams_SYTYCG_Season1.csv"
@@ -55,6 +56,7 @@ g2 <- t1 %>%
     ,add = "mean"
     ,rug = TRUE
     ,palette = c("#00AFBB", "#E7B800")
+    ,alpha = .2
   )
 g2
 
@@ -86,7 +88,6 @@ g4 <-  t2 %>%
 g4
 
 # or spreads
-
 g5 <-  ds %>% 
   ggpubr::ggdensity(
     x = "val"
@@ -98,6 +99,58 @@ g5 <-  ds %>%
   )+
   facet_wrap(~graphNum)
 g5
+
+# ---- sample-of-graphs-1 --------------------
+
+# conditions <- c(2, 12, 22, 32)
+conditions <- c(5, 15, 25, 35)
+d1 <- ds %>% 
+  dplyr::filter(graphNum %in% conditions) 
+
+# density
+g6 <-  d1 %>% 
+  dplyr::filter(graphNum %in% conditions) %>% 
+  ggpubr::ggdensity(
+    x = "val"
+    ,color = "group"
+    ,fill  = "group"
+    ,add = "mean"
+    ,rug = TRUE
+    ,palette = c("#00AFBB", "#E7B800")
+  )+
+  facet_wrap(~graphNum)
+g6
+
+# boxplot
+g7 <- d1 %>% 
+  ggpubr::ggboxplot(
+    x         = "group"
+    , y       = "val"
+    , color   = "group"
+    , palette = c("#00AFBB", "#E7B800")
+    , add     = "jitter"
+    , shape   = "group"
+  )+
+  facet_wrap(~graphNum)
+g7 %>% print()
+
+# histogram
+g8 <- d1 %>% 
+ggpubr::gghistogram(
+  x = "val"
+  ,color = "group"
+  ,fill  = "group"
+  ,add = "mean"
+  ,rug = TRUE
+  ,palette = c("#00AFBB", "#E7B800")
+  ,alpha = .2
+)+
+  facet_wrap(~graphNum)
+g8
+
+ds_pars %>% filter(graphNum %in% c(1,11,21,31))
+
+
 
   
 # ---- define-utility-functions ---------------
