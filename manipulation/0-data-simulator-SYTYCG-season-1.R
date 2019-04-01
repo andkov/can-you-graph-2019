@@ -67,7 +67,9 @@ graphNum <- 0
 
 for (i in 1:length(effectSizes)) {
   for (j in 1:numReps) {
-
+      # values for testing and development
+      # i <- .3
+      # j <- 7
       mean1 <- 50
       sdPooled <- sqrt((10^2 + 10^2) / 2)
       mean2 <- mean1 + (effectSizes[i] * sdPooled)
